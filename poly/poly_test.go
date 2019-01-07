@@ -1,6 +1,10 @@
 package poly
 
-import "testing"
+import (
+	"math"
+	"math/rand"
+	"testing"
+)
 
 func TestEmptyCoefficients(t *testing.T) {
 	y := Y(1, []float64{})
@@ -49,4 +53,45 @@ func TestFractionalX(t *testing.T) {
 	if y != 1.23 {
 		t.Error("Expected 1.23 got", y)
 	}
+}
+
+func TestZeroCoefficients(t *testing.T) {
+	y := Y(2, []float64{1, 0, 0, 0, 5})
+	if y != 81 {
+		t.Error("Expected 81 got", y)
+	}
+}
+
+func TestRandomDegree5(t *testing.T) {
+	for i := 0; i < 1000; i++ {
+		x := randFloat()
+		cs := randCs()
+		tval := Y(x, cs[:])
+		cval := dumbEval(x, cs)
+		if tval != cval {
+			t.Error("Expected", cval, "got", tval)
+		}
+	}
+}
+
+func randFloat() float64 {
+	abs := rand.Float64() * rand.Float64() * 1000
+	if rand.Float32() < 0.5 {
+		return abs * -1
+	}
+	return abs
+}
+
+func randCs() [5]float64 {
+	return [5]float64{
+		randFloat(),
+		randFloat(),
+		randFloat(),
+		randFloat(),
+		randFloat(),
+	}
+}
+
+func dumbEval(x float64, cs [5]float64) float64 {
+	return cs[0] + x*cs[1] + math.Pow(x, 2)*cs[2] + math.Pow(x, 3)*cs[3] + math.Pow(x, 4)*cs[4]
 }

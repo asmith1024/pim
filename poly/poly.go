@@ -12,8 +12,10 @@ func Y(x float64, coeffs []float64) float64 {
 		return coeffs[0]
 	}
 	result := 0.0
-	for d, c := range coeffs {
-		result += c * math.Pow(x, float64(d))
+	for e, c := range coeffs {
+		if c != 0 {
+			result += c * math.Pow(x, float64(e))
+		}
 	}
 	return result
 }
