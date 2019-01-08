@@ -95,3 +95,49 @@ func randCs() [5]float64 {
 func dumbEval(x float64, cs [5]float64) float64 {
 	return cs[0] + x*cs[1] + math.Pow(x, 2)*cs[2] + math.Pow(x, 3)*cs[3] + math.Pow(x, 4)*cs[4]
 }
+
+func TestPrint1(t *testing.T) {
+	s := Print([]float64{1, -2, 3, -4})
+	e := "f(x) = -4x^3 + 3x^2 - 2x + 1"
+	if s != e {
+		t.Error("Unexpected rendering", s)
+	}
+}
+
+func TestPrint2(t *testing.T) {
+	s := Print([]float64{1, 0, 0, 0})
+	e := "f(x) = 1"
+	if s != e {
+		t.Error("Unexpected rendering", s)
+	}
+}
+
+func TestPrint3(t *testing.T) {
+	s := Print([]float64{0, 0, 0, -8.123, 0, 0, 0, 0})
+	e := "f(x) = -8.123x^3"
+	if s != e {
+		t.Error("Unexpected rendering", s)
+	}
+}
+
+func TestPrint4(t *testing.T) {
+	s := Print([]float64{-6.444, 0, 0, -8.123, 0, 0, 0, 0})
+	e := "f(x) = -8.123x^3 - 6.444"
+	if s != e {
+		t.Error("Unexpected rendering", s)
+	}
+}
+
+func TestPrintEmpty(t *testing.T) {
+	s := Print([]float64{})
+	if s != "" {
+		t.Error("Unexpected rendering", s)
+	}
+}
+
+func TestPrintAllZeroes(t *testing.T) {
+	s := Print([]float64{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+	if s != "" {
+		t.Error("Unexpected rendering", s)
+	}
+}
