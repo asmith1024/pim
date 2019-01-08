@@ -96,6 +96,27 @@ func dumbEval(x float64, cs [5]float64) float64 {
 	return cs[0] + x*cs[1] + math.Pow(x, 2)*cs[2] + math.Pow(x, 3)*cs[3] + math.Pow(x, 4)*cs[4]
 }
 
+func TestInterpolate1(t *testing.T) {
+	pts := []Point{Point{X: 1, Y: 6}, Point{X: 2, Y: 17}, Point{X: 3, Y: 34}}
+	test := Interpolate(pts)
+	expected := []float64{1, 2, 3}
+	if !testEq(test, expected) {
+		t.Error("Unexpected polynomial", test)
+	}
+}
+
+func testEq(a, b []float64) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i, c := range a {
+		if c != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
 func TestPrint1(t *testing.T) {
 	s := Print([]float64{1, -2, 3, -4})
 	e := "f(x) = -4x^3 + 3x^2 - 2x + 1"
