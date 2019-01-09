@@ -96,10 +96,43 @@ func dumbEval(x float64, cs [5]float64) float64 {
 	return cs[0] + x*cs[1] + math.Pow(x, 2)*cs[2] + math.Pow(x, 3)*cs[3] + math.Pow(x, 4)*cs[4]
 }
 
+func TestInterpolateEmpty(t *testing.T) {
+	test := Interpolate([]Point{})
+	if len(test) != 0 {
+		t.Error("Expected empty result got", test)
+	}
+}
+
+func TestInterpolateDup(t *testing.T) {
+	pts := []Point{Point{X: 1, Y: 6}, Point{X: 2, Y: 17}, Point{X: 3, Y: 34}, Point{X: 1, Y: 300}}
+	test := Interpolate(pts)
+	if len(test) != 0 {
+		t.Error("Expected empty result got", test)
+	}
+}
+
 func TestInterpolate1(t *testing.T) {
 	pts := []Point{Point{X: 1, Y: 6}, Point{X: 2, Y: 17}, Point{X: 3, Y: 34}}
 	test := Interpolate(pts)
 	expected := []float64{1, 2, 3}
+	if !testEq(test, expected) {
+		t.Error("Unexpected polynomial", test)
+	}
+}
+
+func TestInterpolate2(t *testing.T) {
+	pts := []Point{Point{X: 3, Y: 34}, Point{X: 1, Y: 6}, Point{X: 2, Y: 17}}
+	test := Interpolate(pts)
+	expected := []float64{1, 2, 3}
+	if !testEq(test, expected) {
+		t.Error("Unexpected polynomial", test)
+	}
+}
+
+func TestInterpolate3(t *testing.T) {
+	pts := []Point{Point{X: -2, Y: 25}, Point{X: 1, Y: 16}, Point{X: 0, Y: 1}, Point{X: 3, Y: 1600}, Point{X: -1, Y: 0}, Point{X: -3, Y: 400}, Point{X: 2, Y: 225}}
+	test := Interpolate(pts)
+	expected := []float64{1, 2, 3, 4, 3, 2, 1}
 	if !testEq(test, expected) {
 		t.Error("Unexpected polynomial", test)
 	}

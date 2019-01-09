@@ -12,6 +12,9 @@ psum x coeffs = foldl' fn (0.0, 0.0) coeffs
     where fn (e, y) 0 = (e + 1.0, y)
           fn (e, y) c = (e + 1.0, y + x**e * c)
 
+-- interpolatePoly corresponds to poly.Interpolate in poly.go
+
+
 -- printPoly corresponds to poly.Print in poly.go
 printPoly :: [Double] -> String
 printPoly []  = ""

@@ -1,4 +1,4 @@
-// Package poly follows chapter 2 of A Programmer's Introduction to Mathematics (J Kun): Polynomials
+// Package poly follows chapter 2 of A Programmer's Introduction to Mathematics (J Kun): Polynomials.
 // A polynomial is represented by a slice of float64. The values represent the coefficients with the
 // index indicating the degree. For example, {1,-2,3,-4} = 1 - 2x + 3x^2 - 4x^3.
 package poly
@@ -10,7 +10,8 @@ import (
 	"strings"
 )
 
-// Y calculates the value of a polynomial given a point on the x-axis and a slice of coefficients. The degree of the polynomial is the slice high index.
+// Y calculates the value of a polynomial given a point on the x-axis and a slice of coefficients.
+// The degree of the polynomial is the highest index in the slice with a non-zero value.
 func Y(x float64, coeffs []float64) float64 {
 	if len(coeffs) == 0 {
 		return 0
@@ -27,7 +28,7 @@ func Y(x float64, coeffs []float64) float64 {
 	return result
 }
 
-// Point describes a spot on a 2D cartesian plane.
+// Point describes a spot on a 2D cartesian plane. There isn't one defined in the Go math package.
 type Point struct {
 	X float64
 	Y float64
@@ -56,6 +57,7 @@ func hasDup(points []Point) bool {
 	return false
 }
 
+// Keep in mind that any time you see a slice of floats it's a polynomial.
 func pcalc(points []Point) []float64 {
 	numerator := make([][]float64, len(points))
 	for i := range points {
@@ -89,20 +91,13 @@ func factorAndReduce(pa, pb []float64) []float64 {
 	if len(pb) == 0 {
 		return pa
 	}
-	result := make([]float64, lenExpansion(len(pa), len(pb)))
+	result := make([]float64, len(pa)+len(pb)-1)
 	for i, a := range pa {
 		for j, b := range pb {
 			result[i+j] += a * b
 		}
 	}
 	return result
-}
-
-func lenExpansion(la, lb int) int {
-	if la > lb {
-		return la + (lb - 1)
-	}
-	return lb + (la - 1)
 }
 
 // per comments for factorAndReduce()
