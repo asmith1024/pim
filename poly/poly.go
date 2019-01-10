@@ -45,7 +45,7 @@ func Interpolate(points []Point) []float64 {
 	if hasDup(points) {
 		return []float64{}
 	}
-	return pcalc(points)
+	return fromPoints(points)
 }
 
 func hasDup(points []Point) bool {
@@ -58,33 +58,38 @@ func hasDup(points []Point) bool {
 }
 
 // Keep in mind that any time you see a slice of floats it's a polynomial.
-func pcalc(points []Point) []float64 {
-	numerator := make([][]float64, len(points))
+func fromPoints(points []Point) []float64 {
+	pterms := make([][]float64, len(points))
 	for i := range points {
-		factors := make([][]float64, len(points)-1)
-		denominator := 1.0
-		fidx := 0
-		for j, p := range points {
-			if j == i { // this is why we need fidx
-				continue
-			}
-			denominator *= (points[i].X - p.X)
-			factors[fidx] = []float64{-1 * p.X, 1}
-			fidx++
-		}
+		denominator, factors := polyAsSumProduct(points, i)
 		expansion := factors[0]
 		for k := 1; k < len(factors); k++ {
-			expansion = factorAndReduce(expansion, factors[k])
+			expansion = product(expansion, factors[k])
 		}
 		yfactor := []float64{points[i].Y / denominator}
-		expansion = factorAndReduce(expansion, yfactor)
-		numerator[i] = expansion
+		expansion = product(expansion, yfactor)
+		pterms[i] = expansion
 	}
-	return sumPolys(numerator)
+	return sum(pterms)
+}
+
+func polyAsSumProduct(points []Point, i int) (float64, [][]float64) {
+	factors := make([][]float64, len(points)-1)
+	denominator := 1.0
+	fidx := 0
+	for j, p := range points {
+		if j == i { // this is why we need fidx
+			continue
+		}
+		denominator *= (points[i].X - p.X)
+		factors[fidx] = []float64{-1 * p.X, 1}
+		fidx++
+	}
+	return denominator, factors
 }
 
 // pa, pb are assumed to follow the representation of polynomials described in the package notes.
-func factorAndReduce(pa, pb []float64) []float64 {
+func product(pa, pb []float64) []float64 {
 	if len(pa) == 0 {
 		return pb
 	}
@@ -100,14 +105,24 @@ func factorAndReduce(pa, pb []float64) []float64 {
 	return result
 }
 
-// per comments for factorAndReduce()
-func sumPolys(polys [][]float64) []float64 {
+// see comments for multPoly()
+func sum(polys [][]float64) []float64 {
 	switch len(polys) {
 	case 0:
 		return []float64{}
 	case 1:
 		return polys[0]
 	}
+	result := makePolyForSum(polys)
+	for _, p := range polys {
+		for i, t := range p {
+			result[i] += t
+		}
+	}
+	return result
+}
+
+func makePolyForSum(polys [][]float64) []float64 {
 	l := len(polys[0])
 	for i := 1; i < len(polys); i++ {
 		l1 := len(polys[i])
@@ -115,13 +130,7 @@ func sumPolys(polys [][]float64) []float64 {
 			l = l1
 		}
 	}
-	result := make([]float64, l)
-	for _, p := range polys {
-		for i, t := range p {
-			result[i] += t
-		}
-	}
-	return result
+	return make([]float64, l)
 }
 
 // Print writes a polynomial in the format f(x) = ax^n +|- bx^(n-1) ... +|- cx + d.
