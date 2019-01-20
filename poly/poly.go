@@ -61,20 +61,18 @@ func hasDup(points []Point) bool {
 func fromPoints(points []Point) []float64 {
 	pterms := make([][]float64, len(points))
 	for i := range points {
-		denominator, factors := polyAsSumProduct(points, i)
-		expansion := factors[0]
-		for k := 1; k < len(factors); k++ {
-			expansion = product(expansion, factors[k])
+		term := termAtIndex(points, i)
+		expansion := term[0]
+		for k := 1; k < len(term); k++ {
+			expansion = product(expansion, term[k])
 		}
-		yfactor := []float64{points[i].Y / denominator}
-		expansion = product(expansion, yfactor)
 		pterms[i] = expansion
 	}
 	return sum(pterms)
 }
 
-func polyAsSumProduct(points []Point, i int) (float64, [][]float64) {
-	factors := make([][]float64, len(points)-1)
+func termAtIndex(points []Point, i int) [][]float64 {
+	factors := make([][]float64, len(points))
 	denominator := 1.0
 	fidx := 0
 	for j, p := range points {
@@ -85,10 +83,12 @@ func polyAsSumProduct(points []Point, i int) (float64, [][]float64) {
 		factors[fidx] = []float64{-1 * p.X, 1}
 		fidx++
 	}
-	return denominator, factors
+	factors[fidx] = []float64{points[i].Y / denominator}
+	return factors
 }
 
 // pa, pb are assumed to follow the representation of polynomials described in the package notes.
+// Keep in mind that we are multiplying ax^m by bx^n so we end up with abx^(n+m).
 func product(pa, pb []float64) []float64 {
 	if len(pa) == 0 {
 		return pb
