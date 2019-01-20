@@ -13,10 +13,6 @@ interpolatePoly = interpolate . validPoints
 interpolate :: [(Double, Double)] -> [Double]
 interpolate ps = map (\(Term c e) -> c) $ simplifyTerms (concatMap (reduceTerms . termsAtPoint ps) ps)
 
-reduceTerms :: [[Double]] -> [Term]
-reduceTerms ps = let (first:next) = map getTerms ps
-                  in simplifyTerms (foldl' (\p t -> [a `mult` b | a <- p, b <- t]) first next)
-
 termsAtPoint :: [(Double, Double)] -> (Double, Double) -> [[Double]]
 termsAtPoint ps (x,y) = includeDenominator y $ processPoint x (filter (\(a,b) -> x /= a) ps)
 
@@ -32,15 +28,11 @@ denominator x ps = product [x - fst p | p <- ps]
 includeDenominator :: Double -> ([[Double]], Double) -> [[Double]]
 includeDenominator y (ts, d) = [y/d]:ts
 
-sumReduce :: [[Double]] -> [Double]
-sumReduce = foldl' (longZip (+)) []
-
-longZip :: (a -> a -> a) -> [a] -> [a] -> [a]
-longZip _ [] bs = bs
-longZip _ as [] = as
-longZip fn (a:as) (b:bs) = a `fn` b : longZip fn as bs
-
 data Term = Term Double Int
+
+reduceTerms :: [[Double]] -> [Term]
+reduceTerms ps = let (first:next) = map getTerms ps
+                  in simplifyTerms (foldl' cproduct first next)
 
 getTerms :: [Double] -> [Term]
 getTerms cs = zipWith Term cs [0..]
@@ -83,7 +75,7 @@ sortedHasDup = snd . foldl' (\(a, b) (c, _) -> (c, b || a == c)) (0.0, False)
 
 -- printPoly corresponds to poly.Print in poly.go
 printPoly :: [Double] -> String
-printPoly = printTerms . filter notZero . getTerms
+printPoly = printTerms . filter notZero . reverse . getTerms
 
 notZero :: Term -> Bool
 notZero (Term c _) = c /= 0.0

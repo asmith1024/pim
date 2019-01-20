@@ -105,7 +105,7 @@ func product(pa, pb []float64) []float64 {
 	return result
 }
 
-// see comments for multPoly()
+// see comments for product()
 func sum(polys [][]float64) []float64 {
 	switch len(polys) {
 	case 0:
