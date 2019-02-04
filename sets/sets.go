@@ -11,19 +11,18 @@ import (
 )
 
 // StableMarriage implements the "stable marriages" algorithm for sets where
-// items from each set are identified by int and preferences into the other
+// items from each set are identified by int 1+ and preferences into the other
 // set are represented by a slice of int identifiers. The lower the index
-// the greater the preference. There are (at least) two problems with this
-// representation:
-// 1. You have to separately enforce element uniqueness.
-// 2. Checking preferences is not efficicient with large sets.
+// the greater the preference. "Proposals" flow from setA to setB. The return
+// value is the final set of pairs keyed by setB.
 //
-// By convention, "proposals" flow from setA to setB.
-// The return value is the final set of pairs keyed by setB.
-//
-// setA and setB must be the same size.
-// An identifier 0 means uninitialized.
+// setA and setB must be the same size. An identifier 0 means uninitialized.
 func StableMarriage(setA, setB map[int][]int) (pairsBA map[int]int, err error) {
+	// TODO: make this test for all invalid circumstances
+	// TODO: 1. lengths (sorted)
+	// TODO: 2. check that setA and setA are actually sets
+	// TODO: 3. Check that each set of preferences contains all the elements of the target set
+	// TODO: 4. and does not duplicate any
 	if len(setA) != len(setB) {
 		err = errors.New("sets A and B do not form a bijection")
 		return
@@ -48,7 +47,6 @@ func StableMarriage(setA, setB map[int][]int) (pairsBA map[int]int, err error) {
 				}
 			}
 		}
-		// there are dodgy parameter values that will cause this never to return
 	}
 	return
 }
@@ -70,6 +68,7 @@ func preferred(idCurrent, idNew int, prefs []int) bool {
 // If IsStable returns false, err identifies the first pair from pairs that
 // is not stable. This method is like O(n!) so I suck.
 func IsStable(setA, setB map[int][]int, pairsBA map[int]int) (bool, error) {
+	// TODO: make this test for all invalid circumstances (see TODOs above)
 	pairsAB := make(map[int]int, len(pairsBA))
 	for b, a := range pairsBA {
 		pairsAB[a] = b
