@@ -1,6 +1,9 @@
 package sets
 
-import "testing"
+import (
+	"math/rand"
+	"testing"
+)
 
 func getSimpleTest() (setA, setB map[int][]int, pairs map[int]int) {
 	setA = map[int][]int{
@@ -52,5 +55,23 @@ func TestSimpleIsStable(t *testing.T) {
 	}
 	if !ok {
 		t.Error("Unexpected failure")
+	}
+}
+
+func TestABunchOfIsStable(t *testing.T) {
+	for i := 0; i < 100; i++ {
+		size := rand.Intn(200) + 1
+		setA, setB := InitSets(size, RandomPrefs)
+		pairs, err := StableMarriage(setA, setB)
+		if err != nil {
+			t.Fatal(err)
+		}
+		ok, err := IsStable(setA, setB, pairs)
+		if err != nil {
+			t.Error("Failed on set size", size, err)
+		}
+		if !ok {
+			t.Error("Unexpected failure on set size", size)
+		}
 	}
 }

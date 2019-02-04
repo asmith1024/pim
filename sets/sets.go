@@ -53,40 +53,6 @@ func StableMarriage(setA, setB map[int][]int) (pairsBA map[int]int, err error) {
 	return
 }
 
-// FnPrefs is a preference allocation function used by InitSets. Implementions
-// must expect both set member keys to be a number between 1 and size.
-// A mapping is implied between these indices and whatever the source sets represent.
-// isA is true if key is a member of setA, false if key is a member of setB.
-type FnPrefs func(isA bool, key, size int) []int
-
-// RandomPrefs (more-or-less) randomly assigns preferences.
-func RandomPrefs(isA bool, key, size int) []int {
-	result := make([]int, size)
-	rnd := rand.New(rand.NewSource(seed.MACSeed()))
-	for i := 1; i <= size; i++ {
-		v := rnd.Intn(size-1) + 1
-		for j := 0; j < i; j++ {
-			if result[j] == v {
-				break
-			}
-		}
-
-	}
-	return result
-}
-
-// InitSets takes a size and a function that allocates preferences and returns
-// maps suitable as setA, setB parameters to StableMarriage and IsStable.
-func InitSets(size int, fn FnPrefs) (setA, setB map[int][]int) {
-	setA = make(map[int][]int, size)
-	setB = make(map[int][]int, size)
-	for i := 1; i <= size; i++ {
-		setA[i] = fn(true, i, size)
-		setB[i] = fn(false, i, size)
-	}
-	return
-}
-
 func preferred(idCurrent, idNew int, prefs []int) bool {
 	for _, v := range prefs {
 		switch {
@@ -111,7 +77,7 @@ func IsStable(setA, setB map[int][]int, pairsBA map[int]int) (bool, error) {
 	for b, a := range pairsBA {
 		bprefs, ok := setB[b]
 		if !ok {
-			return ok, fmt.Errorf("identifier %d not found in set B", b)
+			return false, fmt.Errorf("identifier %d not found in set B", b)
 		}
 		for _, v := range bprefs {
 			if v == a {
@@ -119,7 +85,7 @@ func IsStable(setA, setB map[int][]int, pairsBA map[int]int) (bool, error) {
 			}
 			currentB, ok := pairsAB[v]
 			if !ok {
-				return ok, fmt.Errorf("set A identifier %d is not paired with an identifier from set B", v)
+				return false, fmt.Errorf("set A identifier %d is not paired with an identifier from set B", v)
 			}
 			aprefs, ok := setA[v]
 			if preferred(currentB, b, aprefs) {
@@ -128,4 +94,51 @@ func IsStable(setA, setB map[int][]int, pairsBA map[int]int) (bool, error) {
 		}
 	}
 	return true, nil
+}
+
+// InitSets takes a size and a function that allocates preferences and returns
+// maps suitable as setA, setB parameters to StableMarriage and IsStable.
+func InitSets(size int, fn FnPrefs) (setA, setB map[int][]int) {
+	setA = make(map[int][]int, size)
+	setB = make(map[int][]int, size)
+	for i := 1; i <= size; i++ {
+		setA[i] = fn(true, i, size)
+		setB[i] = fn(false, i, size)
+	}
+	return
+}
+
+// FnPrefs is a preference allocation function used by InitSets. Implementions
+// must expect both sets to key their members by a number between 1 and size.
+// A mapping is implied between these indices and whatever the source sets represent.
+// isA is true if key is a member of setA, false if key is a member of setB.
+type FnPrefs func(isA bool, key, size int) []int
+
+// RandomPrefs (more-or-less) randomly assigns preferences.
+func RandomPrefs(isA bool, key, size int) []int {
+	seed.Set()
+	source := make([]int, size)
+	for i := 0; i < size; i++ {
+		source[i] = i + 1
+	}
+	result := make([]int, size)
+	for i := 0; i < size; i++ {
+		j := rand.Intn(len(source))
+		result[i] = source[j]
+		source = remove(j, source)
+	}
+	return result
+}
+
+func remove(index int, src []int) []int {
+	switch {
+	case len(src) == 1:
+		return []int{}
+	case index == 0:
+		return src[1:]
+	case index == len(src)-1:
+		return src[:index]
+	default:
+		return append(src[:index], src[index+1:]...)
+	}
 }

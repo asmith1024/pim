@@ -1,43 +1,23 @@
-// Package seed contains methods that generate seeds for random number generators that hopefully don't completely suck.
-// Note very carefully: this first cut is super naive and not well thought out. Just chucking Mac Addresses into the mix.
+// Package seed overengineers a way to initialise the math/rand default Source from crypto/rand.
 package seed
 
 import (
-	"crypto/sha256"
-	"net"
-	"time"
+	crand "crypto/rand"
+	mrand "math/rand"
 )
 
-// MACSeed generates a seed based on the first located MAC address .
-func MACSeed() int64 {
-	var result int64
-	hash := sha256.Sum256([]byte(getFirstMacAddress()))
-	var i uint
-	for i < 8 {
-		result = or(result, i, hash[i:i+4])
-		i++
-	}
-	return result % time.Now().UnixNano()
-}
+const (
+	size = 8
+)
 
-func or(v int64, shift uint, bs []byte) int64 {
-	var result int64
-	for _, b := range bs {
-		result = result ^ int64(b)
+// Set calls math/rand.Seed() with a value generated from crypto/rand.Read()
+func Set() {
+	bs := make([]byte, size)
+	crand.Read(bs)
+	var i uint64
+	var s int64
+	for i = 0; i < size; i++ {
+		s = s | int64(bs[i])<<(i<<3)
 	}
-	return v | result<<shift
-}
-
-func getFirstMacAddress() string {
-	ni, err := net.Interfaces()
-	if err != nil {
-		return ""
-	}
-	for _, a := range ni {
-		r := a.HardwareAddr.String()
-		if r != "" {
-			return r
-		}
-	}
-	return ""
+	mrand.Seed(s)
 }
