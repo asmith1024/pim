@@ -65,6 +65,7 @@ func TestZeroCoefficients(t *testing.T) {
 }
 
 func TestRandomDegree5(t *testing.T) {
+	seed.Set()
 	for i := 0; i < 1000; i++ {
 		x := randFloat()
 		cs := randCs()
@@ -85,7 +86,6 @@ func randFloat() float64 {
 }
 
 func randCs() [5]float64 {
-	seed.Set()
 	return [5]float64{
 		randFloat(),
 		randFloat(),
