@@ -4,6 +4,8 @@ import (
 	"math"
 	"math/rand"
 	"testing"
+
+	"github.com/asmith1024/pim/seed"
 )
 
 func TestEmptyCoefficients(t *testing.T) {
@@ -63,6 +65,7 @@ func TestZeroCoefficients(t *testing.T) {
 }
 
 func TestRandomDegree5(t *testing.T) {
+	seed.Set()
 	for i := 0; i < 1000; i++ {
 		x := randFloat()
 		cs := randCs()
