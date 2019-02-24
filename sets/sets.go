@@ -11,12 +11,12 @@ import (
 )
 
 // StableMarriage implements the "stable marriages" algorithm for sets where
-// items from each set are identified by int and preferences into the other
-// set are represented by a slice of int identifiers. The lower the index
-// the greater the preference. There are (at least) two problems with this
+// items from each set are identified by int value 1+ and preferences into
+// the other set are represented by a slice of int identifiers. The lower the
+// index the greater the preference. There are (at least) two problems with this
 // representation:
 // 1. You have to separately enforce element uniqueness.
-// 2. Checking preferences is not efficicient with large sets.
+// 2. Checking preferences is not efficient with large sets.
 //
 // By convention, "proposals" flow from setA to setB.
 // The return value is the final set of pairs keyed by setB.
