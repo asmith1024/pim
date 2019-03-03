@@ -11,19 +11,10 @@ import (
 )
 
 // StableMarriage implements the "stable marriages" algorithm for sets where
-<<<<<<< HEAD
-// items from each set are identified by int value 1+ and preferences into
-// the other set are represented by a slice of int identifiers. The lower the
-// index the greater the preference. There are (at least) two problems with this
-// representation:
-// 1. You have to separately enforce element uniqueness.
-// 2. Checking preferences is not efficient with large sets.
-=======
 // items from each set are identified by int 1+ and preferences into the other
 // set are represented by a slice of int identifiers. The lower the index
 // the greater the preference. "Proposals" flow from setA to setB. The return
 // value is the final set of pairs keyed by setB.
->>>>>>> 7abab089570724eb41f30b3ca57550c1db9d0291
 //
 // setA and setB must be the same size. An identifier 0 means uninitialized.
 func StableMarriage(setA, setB map[int][]int) (pairsBA map[int]int, err error) {
