@@ -10,6 +10,10 @@ import (
 	"github.com/asmith1024/pim/seed"
 )
 
+func init() {
+	seed.Set()
+}
+
 // StableMarriage implements the "stable marriages" algorithm for sets where
 // items from each set are identified by int 1+ and preferences into the other
 // set are represented by a slice of int identifiers. The lower the index
@@ -115,7 +119,6 @@ type FnPrefs func(isA bool, key, size int) []int
 
 // RandomPrefs (more-or-less) randomly assigns preferences.
 func RandomPrefs(isA bool, key, size int) []int {
-	seed.Set()
 	source := make([]int, size)
 	for i := 0; i < size; i++ {
 		source[i] = i + 1
