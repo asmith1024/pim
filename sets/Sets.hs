@@ -15,10 +15,19 @@ import Data.List (foldl', sortBy)
 -- preference allocation process. We expect this result to contain an
 -- entry that uniquely combines every element from both source sets.
 
--- TDD skeleton
+-- 1.0 TDD skeleton
+
+--allocatePreferences :: [[Int]] -> [[Int]] -> [(Int, Int)]
+--allocatePreferences _ _ = []
+
+--areAllocationsStable :: [[Int]] -> [[Int]] -> [(Int, Int)] -> Bool
+--areAllocationsStable _ _ _ = False
+
+-- 1.1 First pass
 
 allocatePreferences :: [[Int]] -> [[Int]] -> [(Int, Int)]
 allocatePreferences _ _ = []
 
 areAllocationsStable :: [[Int]] -> [[Int]] -> [(Int, Int)] -> Bool
 areAllocationsStable _ _ _ = False
+

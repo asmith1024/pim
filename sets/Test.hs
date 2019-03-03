@@ -4,6 +4,11 @@ import System.Random.Shuffle (shuffle')
 import Test.QuickCheck
 import Sets
 
+-- test the basic case from the Go implementation
+
+test_simple :: Bool
+test_simple = allocatePreferences [[1,2,3],[3,2,1],[2,3,1]] [[1,2,3],[1,2,3],[1,2,3]] == [(1,1),(2,3),(3,2)]
+
 -- define a custom generator for Prefs
 -- generating pseudo-random preference sets is not trivial in Haskell - see https://wiki.haskell.org/Random_shuffle
 -- I hate dependencies.
