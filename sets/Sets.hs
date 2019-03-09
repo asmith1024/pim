@@ -28,6 +28,12 @@ import Data.List (foldl', sortBy)
 allocatePreferences :: [[Int]] -> [[Int]] -> [(Int, Int)]
 allocatePreferences _ _ = []
 
+indexPreferences :: [Int] -> [(Int, Int)]
+indexPreferences = zipWith (\x y -> (x,y)) [1..]
+
+--mutualPreferences :: [[Int]] -> [[Int]] -> [((Int, Int), Int)]
+--mutualPreferences a b = [((), ) | ]
+
 areAllocationsStable :: [[Int]] -> [[Int]] -> [(Int, Int)] -> Bool
 areAllocationsStable _ _ _ = False
 

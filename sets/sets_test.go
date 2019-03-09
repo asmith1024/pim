@@ -75,3 +75,47 @@ func TestABunchOfIsStable(t *testing.T) {
 		}
 	}
 }
+
+func initAllocations() (map[int][]int, map[int][]int) {
+	setA := map[int][]int{
+		1: []int{1, 2, 3},
+		2: []int{3, 2, 1},
+		3: []int{3, 1, 2},
+	}
+	setB := map[int][]int{
+		1: []int{2, 3, 1},
+		2: []int{1, 2, 3},
+		3: []int{3, 2, 1},
+	}
+	return setA, setB
+}
+
+func tests(setA, setB map[int][]int, pairs map[int]int, t *testing.T) {
+	ok, err := IsStable(setA, setB, pairs)
+	if err != nil {
+		t.Error("Unexpected error", err)
+	}
+	if !ok {
+		t.Error("Allocations are not stable")
+	}
+}
+
+func TestOptimizedIsStable(t *testing.T) {
+	setA, setB := initAllocations()
+	pairs := map[int]int{
+		1: 2,
+		2: 1,
+		3: 3,
+	}
+	tests(setA, setB, pairs, t)
+}
+
+func TestUnoptimizedIsStable(t *testing.T) {
+	setA, setB := initAllocations()
+	pairs := map[int]int{
+		1: 1,
+		2: 2,
+		3: 3,
+	}
+	tests(setA, setB, pairs, t)
+}
