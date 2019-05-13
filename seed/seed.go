@@ -10,8 +10,7 @@ const (
 	size = 8
 )
 
-// Set calls math/rand.Seed() with a value generated from crypto/rand.Read()
-func Set() {
+func seed() int64 {
 	bs := make([]byte, size)
 	crand.Read(bs)
 	var i uint64
@@ -19,5 +18,15 @@ func Set() {
 	for i = 0; i < size; i++ {
 		s = s | int64(bs[i])<<(i<<3)
 	}
-	mrand.Seed(s)
+	return s
+}
+
+// Set calls math/rand.Seed() with a value generated from crypto/rand.Read()
+func Set() {
+	mrand.Seed(seed())
+}
+
+// Source returns a crypto-seeded, non-threadsafe rand.Source
+func Source() mrand.Source {
+	return mrand.NewSource(seed())
 }
